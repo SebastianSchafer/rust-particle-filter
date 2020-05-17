@@ -1,0 +1,13 @@
+[package]
+name = "particle_filter"
+version = "0.1.0"
+authors = ["Sebastian Schafer <26995419+SebastianSchafer@users.noreply.github.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rand = "0.7.3"
+rand_distr = "0.2.2"
+serde = { version = "1", features = ["derive"] }
+csv = "1.1.3"
