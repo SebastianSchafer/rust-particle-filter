@@ -1,11 +1,6 @@
 
-#![allow(dead_code)]
-#![allow(unused_variables)]
-#![allow(unused_parens)]
-#![allow(unused_imports)]
-#![allow(unused_mut)]
 
-use std::{io, fs, error::Error};
+
 use rand;
 use rand_distr::{Normal, Distribution};
 use rand::distributions::WeightedIndex;
@@ -20,12 +15,14 @@ pub struct Landmark{
     pub id: u32
 }
 
+/// Vehicle controls; necessary for prediction step
 #[derive(Debug)]
 pub struct Controls {
     pub velocity: f64,
     pub yawrate: f64,
 }
 
+/// Struct containing a particle
 #[derive(Debug, Default, Copy, Clone)]
 pub struct Particle {
     pub id: u32,
@@ -33,9 +30,6 @@ pub struct Particle {
     pub y: f64,
     pub phi: f64,
     pub weight: f64,
-    // associations: Vec<u32>,
-    // sense_x: Vec<f64>,
-    // sense_y: Vec<f64>,
   }
 
 /// Struct holding state and parameters of ParticleFilter
@@ -120,29 +114,27 @@ impl ParticleFilter {
         }
     }
     /// Associate current observations with closest landmark ID
-    fn associate_obs_lm(&self, landmarks: &Vec<Landmark>, observations: &mut Vec<Landmark>) {
-        for obs in observations {
-            let mut min_dist = self.sensor_range * 2.0;
-            let mut best_id: u32 = 0;
+    /// Currently not used; ToDo how to call method modifying struct within for loop of other method?
+    // fn associate_obs_lm(&self, landmarks: &Vec<Landmark>, observations: &mut Vec<Landmark>) {
+    //     for obs in observations {
+    //         let mut min_dist = self.sensor_range * 2.0;
+    //         let mut best_id: u32 = 0;
 
-            for lm in landmarks {
-                let current_dist = ((lm.x - obs.x).powi(2) + (lm.y - obs.y).powi(2)).sqrt();
-                if current_dist < min_dist {
-                    min_dist = current_dist;
-                    best_id = lm.id;
-                }
-            obs.id = best_id;
-            }
-        }
-    }
+    //         for lm in landmarks {
+    //             let current_dist = ((lm.x - obs.x).powi(2) + (lm.y - obs.y).powi(2)).sqrt();
+    //             if current_dist < min_dist {
+    //                 min_dist = current_dist;
+    //                 best_id = lm.id;
+    //             }
+    //         obs.id = best_id;
+    //         }
+    //     }
+    // }
 
     /// Updating particle weights based on multivariate distributions
     /// Taking predicted particles and observations to calculate weights
     /// Observations are in vehicle coordinates and are transformed into map coordinates
     pub fn update_weights(&mut self, observations: &Vec<Landmark>, landmarks: &Vec<Landmark>) {
-        // transform observations into map coordinates
-        // calculate particle weights
-
         for p in &mut self.particles {
             // get all landmarks in sensor range
             let mut visible_lm  = Vec::new();
@@ -165,7 +157,6 @@ impl ParticleFilter {
             }
             // associate lm to obs
             // self.associate_obs_lm(&visible_lm, &mut map_observations);
-
             for m_obs in &mut map_observations {
                 let mut min_dist = self.sensor_range * 2.0;
                 let mut best_id: u32 = 0;
@@ -197,7 +188,6 @@ impl ParticleFilter {
                 }
             }
         }
-
     }
     
     /// resample particles with replacement proportional to weight
@@ -230,7 +220,6 @@ impl ParticleFilter {
         }
 
         let bp = self.particles.iter().find(|x| x.weight == max_weight).unwrap().clone();
-
         self.best_particle = bp;
     }
 

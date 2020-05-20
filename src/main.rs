@@ -1,36 +1,11 @@
 
-// Structure, ToDo:
-// main.rs:
-// read obs, controls, map, call particle filter, evaluate accuracy, print out
-// particle_filter:
-// struct PArticleFilter
-// init if not init; n particles around init po, with norm dist in x,y, theta
-// predict; take dt, std, controls (velocity, yaw rate) -> update state (need to transform)
-// associate obs and landmarks: assign landmarkID with smallest ditance to observation
-// update weights: take landmarks, obs, etc; for each particle get landmarks within sensor range,
-// then transform all observations to map coordinates, call association func and recalc
-// weight of associated particles/obs using gaussian around obs - landmark
-// resample: draw n new particles with replacement from existing prop to weight
-
-// keep for now for quicker debugging:
-#![allow(dead_code)]
-#![allow(unused_variables)]
-#![allow(unused_parens)]
-#![allow(unused_imports)]
-#![allow(unused_mut)]
-
-
 use std::{
-        error::Error,
-        io,
         fs,
-        collections::HashMap,
         process,
         time,
     };
 
 use csv;
-use serde::Deserialize;
 
 mod tools;
 use tools::{read_map, 
@@ -108,7 +83,7 @@ fn main() {
 
         // Best estimate of vehicle position
         pf.get_best_particle();
-        let distance = pf.best_error(&ground_truths[i]);
+        // let distance = pf.best_error(&ground_truths[i]);
 
         // for log output
         log.push(vec![pf.best_particle.x, 
